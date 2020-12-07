@@ -4,9 +4,11 @@
 #include <stdio.h>
 #include <sys/types.h>
 
+const char *MQ_NAME = "/queue";
+
 int main(){
 	struct mq_attr st;
-	mqd_t q = mq_open("/queue", O_RDWR | O_CREAT, 0666, NULL);
+	mqd_t q = mq_open(MQ_NAME, O_RDWR | O_CREAT, 0666, NULL);
 
 	if (q == -1)
 	{
@@ -24,12 +26,9 @@ int main(){
 	printf ("Flags: %ld\n", st.mq_flags);
 	printf ("Max messages count: %ld\n", st.mq_maxmsg);
 	printf ("Max message size: %ld\n", st.mq_msgsize);
-	printf ("Current message: %ld\n", st.mq_curmsgs);
+	printf ("Count of messages in the queue: %ld\n", st.mq_curmsgs);
 
-	while (mq_unlink("/queue") == 0)
-	{}
-
-mq_close(q);
-
-return 0;
+	mq_unlink(MQ_NAME);
+	mq_close(q);
+	return 0;
 }
