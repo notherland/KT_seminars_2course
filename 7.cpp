@@ -52,7 +52,7 @@ bool fcopy(int src_fd, int dst_fd) { //copying of file
     	perror("fchmod");
     	return false;
     }
-   
+    
     struct timespec times[2] = {st.st_atime, st.st_mtime};
 
 
@@ -76,16 +76,16 @@ bool dircopy(const char* src, const char* dst){//copying of directory
         exit(EXIT_FAILURE);
     }
 
-	DIR *src_dir = opendir(src);
+    DIR *src_dir = opendir(src);
     if (src_dir == NULL){
         perror("Failed to open src directory " + *src);
-		return false;
-        }
+        return false;
+    }
     std::string dst_dir_name = ((std::string)dst + "/" + (std::string)src);
 
     const char * dst_dir_name_c = dst_dir_name.c_str();
 
-            
+    
     int dst_dir_fd = mkdir(dst_dir_name_c, st.st_mode);
     DIR *dst_dir = opendir(dst_dir_name_c);
     if (dst_dir == NULL){
@@ -93,7 +93,7 @@ bool dircopy(const char* src, const char* dst){//copying of directory
         return false;
     }
 
-  	struct dirent *next_dir;
+    struct dirent *next_dir;
 
     errno = 0;
     if ((next_dir = readdir (src_dir)) == NULL){
@@ -101,13 +101,13 @@ bool dircopy(const char* src, const char* dst){//copying of directory
             perror("readdir");
             return false;
         }
-    	printf ("End of stream\n");
-    	return false;
+        printf ("End of stream\n");
+        return false;
     }
     
     const char* next_dir_name = next_dir->d_name;
 	//std::cout << next_dir_name << " " << dst << std::endl;
-	return copy(next_dir_name, dst_dir_name_c);
+    return copy(next_dir_name, dst_dir_name_c);
 }
 
 
@@ -121,7 +121,7 @@ bool copy (const char* src, const char* dst)
         exit(EXIT_FAILURE);
     }
 
-  
+    
   	//std::cout << "src : " << src << std::endl << "dst : " << dst << std::endl;
     printf("File type: ");
 
@@ -144,39 +144,39 @@ bool copy (const char* src, const char* dst)
                 perror ("Failed to open src\n");
                 return false;}
 
-            std::string dst_name = ((std::string)dst + "/" + (std::string)src);
-			const char * dst_name_c = dst_name.c_str();   
+                std::string dst_name = ((std::string)dst + "/" + (std::string)src);
+                const char * dst_name_c = dst_name.c_str();   
 			//std::cout << src << " " << dst_name << std::endl;
 
-            if ((dst_fd = open (dst_name_c, O_WRONLY | O_TRUNC | O_CREAT, 0600)) < 0){
-                perror ("Failed to open dst\n");
-                close (src_fd);
-                return false;}
-                
-            return fcopy(src_fd, dst_fd);
+                if ((dst_fd = open (dst_name_c, O_WRONLY | O_TRUNC | O_CREAT, 0600)) < 0){
+                    perror ("Failed to open dst\n");
+                    close (src_fd);
+                    return false;}
+                    
+                    return fcopy(src_fd, dst_fd);
 
-        }
-        case S_IFSOCK: {printf("socket\n");                   return true;}
-        default:       {printf("unknown?\n");                 return true;}}
+                }
+                case S_IFSOCK: {printf("socket\n");                   return true;}
+                default:       {printf("unknown?\n");                 return true;}}
 
-}
+            }
 //set umask 0777 or 0000
 //do not copy src to src
 //do not copy if directory with a same name directory is already exists
 
-    int main(int argc, char *argv[]) {
-        if (argc < 3) {
-            printf("Too few arguments\n");
-            return 1;
-        }
+            int main(int argc, char *argv[]) {
+                if (argc < 3) {
+                    printf("Too few arguments\n");
+                    return 1;
+                }
 
 
         //printf ("%d %s %s", argc, argv[1], argv[2]);
 
-        if (copy (argv[1], argv[2]))
-    		printf ("Copied successfully");
-        else
-            printf ("Copied wrongly");
+                if (copy (argv[1], argv[2]))
+                  printf ("Copied successfully");
+              else
+                printf ("Copied wrongly");
 
-        return 0;
-    }
+            return 0;
+        }

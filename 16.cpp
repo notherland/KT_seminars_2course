@@ -29,7 +29,7 @@ int main(){
 	while (mq_unlink("/queue") == 0)
 	{}
 
-	mq_close(q);
+mq_close(q);
 
-	return 0;
+return 0;
 }

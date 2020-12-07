@@ -13,7 +13,7 @@ static void handle_events(int fd, int wd, char* argv[])
 {
 
     char buf[4096]
-        __attribute__ ((aligned(__alignof__(struct inotify_event))));
+    __attribute__ ((aligned(__alignof__(struct inotify_event))));
     const struct inotify_event *event;
     int i;
     ssize_t len;
@@ -34,30 +34,30 @@ static void handle_events(int fd, int wd, char* argv[])
             break;
         /* проходим по всем событиям в буфере */
         for (ptr = buf; ptr < buf + len;
-                ptr += sizeof(struct inotify_event) + event->len) {
+            ptr += sizeof(struct inotify_event) + event->len) {
             event = (const struct inotify_event *) ptr;
             /* печатаем тип события */
-            if (event->mask & IN_OPEN)
-                printf("IN_OPEN: ");
-            if (event->mask & IN_CLOSE_NOWRITE)
-                printf("IN_CLOSE_NOWRITE: ");
-            if (event->mask & IN_CLOSE_WRITE)
-                printf("IN_CLOSE_WRITE: ");
+        if (event->mask & IN_OPEN)
+            printf("IN_OPEN: ");
+        if (event->mask & IN_CLOSE_NOWRITE)
+            printf("IN_CLOSE_NOWRITE: ");
+        if (event->mask & IN_CLOSE_WRITE)
+            printf("IN_CLOSE_WRITE: ");
             /* печатаем имя наблюдаемого каталога */
-            if (wd == event->wd) {
-                printf("%s/", argv[i]);
-                break;
-            }
+        if (wd == event->wd) {
+            printf("%s/", argv[i]);
+            break;
         }
-            /* печатаем имя файла */
-        if (event->len)
-            printf("%s", event->name);
-            /* печатаем тип объекта файловой системы */
-        if (event->mask & IN_ISDIR)
-            printf(" [каталог]\n");
-        else
-            printf(" [файл]\n");
     }
+            /* печатаем имя файла */
+    if (event->len)
+        printf("%s", event->name);
+            /* печатаем тип объекта файловой системы */
+    if (event->mask & IN_ISDIR)
+        printf(" [каталог]\n");
+    else
+        printf(" [файл]\n");
+}
 }
 
 int main(int argc, char* argv[])

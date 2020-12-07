@@ -33,18 +33,18 @@ int main()
     printf("PPID: %u\n", ppid);
 
     if (cpid == 0) {            /* Код, выполняемый потомком */
-        printf("\nChild process: \n");
-        proc_info(getpid());
+    printf("\nChild process: \n");
+    proc_info(getpid());
     } else {                    /* Код, выполняемый родителем */
-        do {
-            w = waitpid(cpid, &status, WUNTRACED | WCONTINUED);
-            if (w == -1) {
-                perror("waitpid");
-                exit(EXIT_FAILURE);
-            }
-            printf("\nParent process: \n");
-        	proc_info(getpid());
-        } while (!WIFEXITED(status) && !WIFSIGNALED(status));
-        exit(EXIT_SUCCESS);
-    }
+    do {
+        w = waitpid(cpid, &status, WUNTRACED | WCONTINUED);
+        if (w == -1) {
+            perror("waitpid");
+            exit(EXIT_FAILURE);
+        }
+        printf("\nParent process: \n");
+        proc_info(getpid());
+    } while (!WIFEXITED(status) && !WIFSIGNALED(status));
+    exit(EXIT_SUCCESS);
+}
 }

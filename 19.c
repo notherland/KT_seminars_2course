@@ -10,11 +10,11 @@ pthread_mutex_t mutex;
 void *increase(void *arg){
 	int i = *((int *)arg);
 	while (shar < 100){
-	pthread_mutex_lock(&mutex);
-	printf ("Process %d  %d\n", i, shar);
-	shar++;
-	pthread_mutex_unlock(&mutex);
-	sleep(0.02);
+		pthread_mutex_lock(&mutex);
+		printf ("Process %d  %d\n", i, shar);
+		shar++;
+		pthread_mutex_unlock(&mutex);
+		sleep(0.02);
 	}
 	return NULL;
 }
@@ -39,13 +39,13 @@ int main(){
 	}
 
 	for (int i = 0; i < 5; i++)
-    {
-    	if (pthread_join(threads[i], NULL) != 0){
-    		perror ("pthread_join");
-    	}
-    }
+	{
+		if (pthread_join(threads[i], NULL) != 0){
+			perror ("pthread_join");
+		}
+	}
 
-    pthread_mutex_destroy(&mutex);
+	pthread_mutex_destroy(&mutex);
 
 
 
