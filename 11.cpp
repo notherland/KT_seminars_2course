@@ -41,6 +41,5 @@ int main(){
 
 	flock (fd, LOCK_UN);
 	fclose (stream);
-	close (fd);
 	return 0;
 }
