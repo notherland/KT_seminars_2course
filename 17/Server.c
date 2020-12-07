@@ -21,7 +21,7 @@ int main(int argc, char *argv[]){
 
 	struct mq_attr st;
 	mq_getattr(q, &st);
-	int msg_len = st.mq_msgsize;
+	unsigned msg_len = st.mq_msgsize;
 	char *msg = (char *) malloc(msg_len);
 	if (!msg){
 		mq_close(q);
@@ -36,14 +36,15 @@ int main(int argc, char *argv[]){
 		if ((sz = mq_receive(q, msg, msg_len, &priority)) == -1){
 			if (errno == EMSGSIZE){
 				mq_getattr(q, &st);
-				msg = (char *)realloc(msg, st.mq_msgsize);
+				msg_len = st.mq_msgsize;
+				msg = (char *)realloc(msg, msg_len);
 				continue;
 			}
 			if (errno == EINTR)
 				break;
 		}
 
-		printf ("%s\n", msg);
+		printf ("%.*s\n", (int)msg_len, msg);
 	}
 	mq_close(q);
 	return 0;
