@@ -22,7 +22,7 @@ int main (int argc, char *argv[])
 		return EXIT_FAILURE;
 	}
 
-	long block_size = st.f_bsize;
+	long block_size = st.f_frsize;
 	cout << "block size " << block_size << endl;
 	cout << "total data blocks in file system " << st.f_blocks << "; total space " << st.f_blocks * block_size / GB << endl;
 	cout << "free blocks in fs " << st.f_bfree << "; free space " << st.f_bfree * block_size / GB << endl;
