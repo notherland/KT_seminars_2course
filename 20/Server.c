@@ -23,34 +23,35 @@ main (int argc, char *argv[])
       return 2;
     }
 
-  char *addr;
-  int ver = 0;
-  int length = strlen (argv[1]);
+  void *addr;
+  struct buf_t *buffer;
+  sem_init (&buffer->sem, 0, 1);
+  buffer->message = (char *) malloc (SHMEM_SIZE);
+  if (buffer->message == NULL)
+    {
+      printf ("Failed to allocate memory\n");
+      return 3;
+    }
+  strcpy (buffer->message, argv[1]);
 
 
   while (1)
     {
-      if (ver == MAXINT - 2)
-
-	printf ("ver = %d\n", ver);
-      addr = mmap (NULL, SHMEM_SIZE, PROT_WRITE, MAP_SHARED, shmid, 0);
+      addr =
+	mmap (NULL, SHMEM_SIZE + sizeof (sem_t), PROT_WRITE, MAP_SHARED,
+	      shmid, 0);
       if (addr == MAP_FAILED)
 	{
 	  perror ("mmap");
 	  shm_unlink (SHMEM_NAME);
-	  return 3;
+	  return 4;
 	}
-
-      ver++;
-      memcpy (addr, &ver, 1);
-      printf ("%s\n", addr);
-      memcpy (addr + 1, argv[1], length);
-      printf ("%s\n", addr);
-      ver++;
-      memcpy (addr, &ver, 1);
-      printf ("%s\n", addr);
+      if (sem_wait (&buffer->sem) == 0)
+	memcpy (addr, &buffer, sizeof (sem_t) + SHMEM_SIZE);
+      sem_post (&buffer->sem);
       sleep (1);
     }
+    free (buffer->message);
   munmap (addr, SHMEM_SIZE);
   shm_unlink (SHMEM_NAME);
   return 0;

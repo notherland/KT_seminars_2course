@@ -5,6 +5,13 @@
 #include <fcntl.h>
 #include <sys/types.h>
 #include <sys/mman.h>
+#include <semaphore.h>
 
-const char *SHMEM_NAME = "/sharmname";
-const int SHMEM_SIZE = 4096;
+const char *SHMEM_NAME = "/SHMEM_NAME";
+enum {SHMEM_SIZE = 4096};
+
+struct buf_t
+{
+  sem_t sem;
+  char *message;
+};

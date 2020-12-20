@@ -18,57 +18,28 @@ main ()
       return 2;
     }
 
-  int prevver = 0;
-  char *buffer = malloc (SHMEM_SIZE);
-  if (buffer == NULL)
-    {
-      perror ("malloc");
-      shm_unlink (SHMEM_NAME);
-      return 3;
-    }
+  struct buf_t *buffer;
 
   while (1)
     {
-      buffer = (char *) mmap (NULL, 1, PROT_READ, MAP_SHARED, shmid, 0);
-      if (buffer == MAP_FAILED)
-	{
-	  perror ("mmap");
-	  shm_unlink (SHMEM_NAME);
-	  free (buffer);
-	  return 4;
-	}
-
-      if (prevver == *buffer)
-	{
-	  printf ("no\n");
-	  sleep (1);
-	  continue;
-	}
-
-      prevver = *buffer;
 
       buffer =
-	(char *) mmap (NULL, SHMEM_SIZE, PROT_READ, MAP_SHARED, shmid, 0);
+	(struct buf_t *) mmap (NULL, SHMEM_SIZE, PROT_READ, MAP_SHARED, shmid,
+			       0);
       if (buffer == MAP_FAILED)
 	{
 	  perror ("mmap");
 	  shm_unlink (SHMEM_NAME);
-	  free (buffer);
 	  return 4;
 	}
 
-      if (prevver != *buffer)
-	{
-	  printf ("changed\n");
-	  prevver = *buffer;
-	  continue;
-	}
-
-      printf ("%s\n", buffer);
+      if (sem_wait (&buffer->sem) == 0)
+	printf ("%s\n", buffer->message);
+      sem_post (&buffer->sem);
+      sleep (1);
     }
 
-  free (buffer);
-  munmap (addr, SHMEM_SIZE);
+  munmap (buffer, SHMEM_SIZE);
   shm_unlink (SHMEM_NAME);
   return 0;
 }
