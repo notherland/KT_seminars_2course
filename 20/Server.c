@@ -47,8 +47,10 @@ main (int argc, char *argv[])
 	  return 4;
 	}
       if (sem_wait (&buffer->sem) == 0)
-	memcpy (addr, &buffer, sizeof (sem_t) + SHMEM_SIZE);
-      sem_post (&buffer->sem);
+	{
+    memcpy (addr, &buffer, sizeof (sem_t) + SHMEM_SIZE);
+    sem_post (&buffer->sem);
+  }
       sleep (1);
     }
     free (buffer->message);

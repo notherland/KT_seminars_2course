@@ -34,8 +34,10 @@ main ()
 	}
 
       if (sem_wait (&buffer->sem) == 0)
-	printf ("%s\n", buffer->message);
-      sem_post (&buffer->sem);
+	{
+    printf ("%s\n", buffer->message);
+    sem_post (&buffer->sem);
+  }
       sleep (1);
     }
 
